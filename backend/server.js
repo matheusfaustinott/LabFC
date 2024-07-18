@@ -37,22 +37,15 @@ app.get('/standings', async (req, res) => {
 
 // Rota de teste com parâmetros fixos
 app.get('/test', async (req, res) => {
-    const league = '75';  
-    const season = '2024';  
+    const league_id = '73'; 
 
-    const options = {
-        method: 'GET',
-        url: 'https://v3.football.api-sports.io/standings',
-        params: { league, season},
-        headers: {
-            'x-apisports-key': process.env.API_KEY
-        }
-    };
+    const url = `https://apiv3.apifootball.com/?action=get_standings&league_id=${league_id}&APIkey=${process.env.API_KEY}`;
 
     try {
-        const response = await axios.request(options);
-        const standings = response.data.response;
-        res.json({ standings })
+        const response = await axios.get(url);
+        // Acesse a propriedade específica dentro da resposta da API
+        const standings = response.data;
+        res.json({ standings });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro ao buscar dados da API.' });
