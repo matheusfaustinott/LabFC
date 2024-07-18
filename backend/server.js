@@ -1,26 +1,64 @@
-const Hapi = require('@hapi/hapi');
+const express = require('express');
+const axios = require('axios');
+require('dotenv').config();
 
-const init = async () => {
-    const server = Hapi.server({
-        port: 5000,
-        host: 'localhost'
-    });
+const app = express();
+const port = 3003;
 
-    server.route({
+// Middleware para analisar JSON
+app.use(express.json());
+
+// Rota principal que recebe parâmetros do front-end
+app.get('/standings', async (req, res) => {
+    const { league, season } = req.query;
+    
+    // Verifique se todos os parâmetros necessários estão presentes
+    if (!league || !season ) {
+        return res.status(400).json({ error: 'Parâmetros league, season e team são obrigatórios.' });
+    }
+
+    const options = {
         method: 'GET',
-        path: '/',
-        handler: (request, h) => {
-            return 'Hello, World!';
+        url: 'https://v3.football.api-sports.io/standings',
+        params: { league, season, team },
+        headers: {
+            'x-apisports-key': process.env.API_KEY
         }
-    });
+    };
 
-    await server.start();
-    console.log('Server running on %s', server.info.uri);
-};
-
-process.on('unhandledRejection', (err) => {
-    console.log(err);
-    process.exit(1);
+    try {
+        const response = await axios.request(options);
+        res.json(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao buscar dados da API.' });
+    }
 });
 
-init();
+// Rota de teste com parâmetros fixos
+app.get('/test', async (req, res) => {
+    const league = '75';  
+    const season = '2024';  
+
+    const options = {
+        method: 'GET',
+        url: 'https://v3.football.api-sports.io/standings',
+        params: { league, season},
+        headers: {
+            'x-apisports-key': process.env.API_KEY
+        }
+    };
+
+    try {
+        const response = await axios.request(options);
+        const standings = response.data.response;
+        res.json({ standings })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao buscar dados da API.' });
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}`);
+});
