@@ -8,7 +8,7 @@ import { chamadaDeTabelaTimes } from '../../utils/chamadasApi';
 const TabelaDePontosTimes = () => {
   const [tabela, setTabela] = useState([]);
   const [pagina, setPagina] = useState(0);
-  const [linhasPorPagina, setLinhasPorPagina] = useState(6);
+  const [linhasPorPagina, setLinhasPorPagina] = useState(20);
 
   useEffect(() => {
     const getTabela = async () => {
@@ -23,14 +23,14 @@ const TabelaDePontosTimes = () => {
     getTabela();
   }, []);
 
-  const handleChangePagina = (event, newpagina) => {
+  {/*const handleChangePagina = (event, newpagina) => {
     setPagina(newpagina);
   };
 
   const handleChangelinhasPorPagina = (event) => {
     setLinhasPorPagina(parseInt(event.target.value, 10));
     setPagina(0); 
-  };
+  };*/}
 
 
   const mostrarTabela = tabela.slice(pagina * linhasPorPagina, pagina * linhasPorPagina + linhasPorPagina);
@@ -63,7 +63,7 @@ const TabelaDePontosTimes = () => {
             ))}
           </TableBody>
         </Table>
-        <TablePagination
+        {/*<TablePagination
           rowsPerPageOptions={[6, 10, 25]}
           component="div"
           count={tabela.length}
@@ -73,7 +73,7 @@ const TabelaDePontosTimes = () => {
           onRowsPerPageChange={handleChangelinhasPorPagina}
           labelRowsPerPage="Linhas por página:"
           labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
-        />
+        />*/}
       </TableContainer>
     </Container>
   );
